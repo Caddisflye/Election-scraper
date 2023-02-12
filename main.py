@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
+import sys
 
 
 def scrape_data(url, file_name):
@@ -19,7 +20,14 @@ def scrape_data(url, file_name):
             data = [cell.text.strip() for cell in row.find_all('td')]
             writer.writerow(data)
 """
+try:
+    url = sys.argv[1]
+except:
+    url = input("Enter the URL of the website: ")
 
-url = input("Enter the URL of the website: ")
-file_name = input("Enter the name of the output file: ")
+try:
+    file_name = sys.argv[2]
+except:
+    file_name = input("Enter the name of the output file: ")
+
 scrape_data(url, file_name)
