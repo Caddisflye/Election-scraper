@@ -29,11 +29,13 @@ def scrape_data(url, file_name):
             writer.writerow(data)
 """
 
+# TODO validate that 'https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=' is in provided website
 try:
     url = sys.argv[1]
 except:
     url = input("Enter the URL of the website: ")
 
+# TODO validate that '.csv' is in provided file name
 try:
     file_name = sys.argv[2]
 except:
