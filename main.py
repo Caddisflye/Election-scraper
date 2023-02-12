@@ -12,9 +12,12 @@ def scrape_data(url, file_name):
     for table in tables:
         rows = table.find_all('tr')
         for row in rows:
-            print(row)
+            cells = row.find_all("td")
+            link = cells[0].find("a")["href"]
+            okrsek_page = requests.get(link)
+            okrsek_soup = BeautifulSoup(okrsek_page.content, 'html.parser')
+            okrsek_tables = okrsek_soup.find_all('table')
 
-# TODO in row find a link to second degree table
 
 # TODO collect the data from second degree table to a dictionary
 
@@ -29,7 +32,7 @@ def scrape_data(url, file_name):
             writer.writerow(data)
 """
 
-# TODO validate that 'https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=2&xnumnuts=' is in provided website
+# TODO validate that 'https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj= is in provided website
 try:
     url = sys.argv[1]
 except:
