@@ -13,6 +13,14 @@ def scrape_data(url, file_name):
         rows = table.find_all('tr')
         for row in rows:
             print(row)
+
+# TODO in row find a link to second degree table
+
+# TODO collect the data from second degree table to a dictionary
+
+# TODO export the dictionary into provided file name
+
+
 """
     with open(file_name, 'w', newline='') as file:
         writer = csv.writer(file)
@@ -20,6 +28,7 @@ def scrape_data(url, file_name):
             data = [cell.text.strip() for cell in row.find_all('td')]
             writer.writerow(data)
 """
+
 try:
     url = sys.argv[1]
 except:
