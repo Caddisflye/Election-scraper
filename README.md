@@ -22,4 +22,4 @@ python election_scraper.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xk
 
 Output of this example:
 
-![output_example](https://imgur.com/a/laki3sd)
+![output_example](https://imgur.com/DU7N5IY.png)
