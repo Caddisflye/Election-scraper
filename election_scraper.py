@@ -58,17 +58,15 @@ def scrape_data(url, file_name):
                     okrsek_strany_rows = okrsek_tables[i].find_all("tr")
                     for okrsek_strany_row in okrsek_strany_rows:
                         okrsek_strany_cells = okrsek_strany_row.find_all("td")
-                        if okrsek_strany_cells:
+                        if okrsek_strany_cells:  # check if not a row of empty cells
                             strana = okrsek_strany_cells[1].get_text()
                             okrsek_strany_value = okrsek_strany_cells[2].get_text()
-
-                            # some tables contain empty rows, check if this row is not empty
-                            #if okrsek_strany_value.isnumeric():
                             data.append(okrsek_strany_value)
 
                             # if strana not in header -> append it
                             if strana not in header:
                                 header.append(strana)
+
                 csv_data.append(data)
 
     # write the header and collected data into the file
