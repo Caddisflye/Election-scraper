@@ -45,7 +45,7 @@ def scrape_data(url, file_name):
                   "STAROSTOVÉ A NEZÁVISLÍ",
                   "Komunistická str.Čech a Moravy",
                   "Strana zelených",
-                  "ROZUMNÍ-stop migraci,diktát.EU",
+                  "ROZUMNÍ-stop migraci a diktát.EU",
                   "Strana svobodných občanů",
                   "Blok proti islam.-Obran.domova",
                   "Občanská demokratická aliance",
