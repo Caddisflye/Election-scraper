@@ -63,12 +63,12 @@ def scrape_data(url, file_name):
                             okrsek_strany_value = okrsek_strany_cells[2].get_text()
 
                             # some tables contain empty rows, check if this row is not empty
-                            if okrsek_strany_value.isnumeric():
-                                data.append(okrsek_strany_value)
+                            #if okrsek_strany_value.isnumeric():
+                            data.append(okrsek_strany_value)
 
-                                # if strana not in header -> append it
-                                if strana not in header:
-                                    header.append(strana)
+                            # if strana not in header -> append it
+                            if strana not in header:
+                                header.append(strana)
                 csv_data.append(data)
 
     # write the header and collected data into the file
