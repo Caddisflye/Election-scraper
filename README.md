@@ -13,7 +13,13 @@ The name of the output file needs to be specified as the second argument when ca
 When no file name is provided, the user is asked to provide one.
 Example of the file name: havlickuv_brod.csv
 
+Necessary libraries: requests, beautifulsoup4
+
 Example of the script call with provided arguments:
 ```
-python election_scraper.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=11&xnumnuts=6203" brno_venkov.csv
+python election_scraper.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=13&xnumnuts=7204" zlin.csv
 ```
+
+Output of this example:
+
+![output_example](https://imgur.com/a/laki3sd)
