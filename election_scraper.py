@@ -18,7 +18,7 @@ def get_tables_from_website(url):
     :return: all the tables found via the url
     """
     page = requests.get(url)
-    soup = BeautifulSoup(page.content, 'html.parser')
+    soup = BeautifulSoup(page.content, 'html.parser', from_encoding="utf-8")
     return soup.find_all('table')
 
 
@@ -29,72 +29,53 @@ def scrape_data(url, file_name):
     :return: nothing
     """
     tables = get_tables_from_website(url)
+    csv_data = []
+    header = ["code", "location", "registered", "envelopes", "valid"]  # manually written start of the header row
 
+    for table in tables:
+        rows = table.find_all('tr')
+        for row in rows:
+            cells = row.find_all("td")
+            if cells and cells[0].find("a"):  # check if not an empty cell
+
+                # the link in the tables is not absolute,so adding the necessary part
+                link = "https://www.volby.cz/pls/ps2017nss/" + cells[0].find("a")["href"]
+                data = [cells[0].find("a").get_text(), cells[1].get_text()]  # code column
+
+                # using the found link in the "číslo" column to get to the tables with values to export
+                okrsek_tables = get_tables_from_website(link)
+
+                # getting values from the first summary table
+                okrsek_souhrn_table = okrsek_tables[0]
+                okrsek_souhrn_row = okrsek_souhrn_table.find_all("tr")[2]
+                okrsek_souhrn_cells = okrsek_souhrn_row.find_all("td")
+                data.append(okrsek_souhrn_cells[3].get_text())  # registered column
+                data.append(okrsek_souhrn_cells[4].get_text())  # envelopes column
+                data.append(okrsek_souhrn_cells[7].get_text())  # valid column
+
+                # getting values from the second and third tables containing values for specific political parties
+                for i in range(1, 3):
+                    okrsek_strany_rows = okrsek_tables[i].find_all("tr")
+                    for okrsek_strany_row in okrsek_strany_rows:
+                        okrsek_strany_cells = okrsek_strany_row.find_all("td")
+                        if okrsek_strany_cells:
+                            strana = okrsek_strany_cells[1].get_text()
+                            okrsek_strany_value = okrsek_strany_cells[2].get_text()
+
+                            # some tables contain empty rows, check if this row is not empty
+                            if okrsek_strany_value.isnumeric():
+                                data.append(okrsek_strany_value)
+
+                                # if strana not in header -> append it
+                                if strana not in header:
+                                    header.append(strana)
+                csv_data.append(data)
+
+    # write the header and collected data into the file
     with open(file_name, 'w', newline='') as file:
         writer = csv.writer(file)
-        header = ["code",
-                  "location",
-                  "registered",
-                  "envelopes",
-                  "valid",
-                  "Občanská demokratická strana",
-                  "Řád národa - Vlastenecká unie",
-                  "CESTA ODPOVĚDNÉ SPOLEČNOSTI",
-                  "Česká str.sociálně demokrat.",
-                  "Radostné Česko",
-                  "STAROSTOVÉ A NEZÁVISLÍ",
-                  "Komunistická str.Čech a Moravy",
-                  "Strana zelených",
-                  "ROZUMNÍ-stop migraci a diktát.EU",
-                  "Strana svobodných občanů",
-                  "Blok proti islam.-Obran.domova",
-                  "Občanská demokratická aliance",
-                  "Česká pirátská strana",
-                  "Referendum o Evropské unii",
-                  "TOP 09",
-                  "ANO 2011",
-                  "Dobrá volba 2016",
-                  "SPR-Republ.str.Čsl. M.Sládka",
-                  "Křesť.demokr.unie-Čs.str.lid.",
-                  "Česká strana národně sociální",
-                  "REALISTÉ",
-                  "SPORTOVCI",
-                  "Dělnic.str.sociální spravedl.",
-                  "Svob.a př.dem.-T.Okamura (SPD)",
-                  "Strana Práv Občanů"
-                  ]  # manually written header row
         writer.writerow(header)
-        for table in tables:
-            rows = table.find_all('tr')
-            for row in rows:
-                cells = row.find_all("td")
-                if cells and cells[0].find("a"):
-                    # the link in the tables is not absolute,so adding the necessary part
-                    link = "https://www.volby.cz/pls/ps2017nss/" + cells[0].find("a")["href"]
-                    data = [cells[0].find("a").get_text(), cells[1].get_text()]  # code column
-
-                    # using the found link in the "číslo" column to get to the tables with values to export
-                    okrsek_tables = get_tables_from_website(link)
-
-                    # getting values from the first summary table
-                    okrsek_souhrn_table = okrsek_tables[0]
-                    okrsek_souhrn_row = okrsek_souhrn_table.find_all("tr")[2]
-                    okrsek_souhrn_cells = okrsek_souhrn_row.find_all("td")
-                    data.append(okrsek_souhrn_cells[3].get_text())  # registered column
-                    data.append(okrsek_souhrn_cells[4].get_text())  # envelopes column
-                    data.append(okrsek_souhrn_cells[7].get_text())  # valid column
-
-                    # getting values from the second and third tables containing values for specific political parties
-                    for i in range(1, 3):
-                        okrsek_strany_rows = okrsek_tables[i].find_all("tr")
-                        for okrsek_strany_row in okrsek_strany_rows:
-                            okrsek_strany_cells = okrsek_strany_row.find_all("td")
-                            if okrsek_strany_cells:
-                                okrsek_strany_value = okrsek_strany_cells[2].get_text()
-                                if okrsek_strany_value.isnumeric():
-                                    data.append(okrsek_strany_value)
-
-                    writer.writerow(data)
+        writer.writerows(csv_data)
 
 
 if __name__ == "__main__":
