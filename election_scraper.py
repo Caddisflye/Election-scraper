@@ -22,11 +22,55 @@ def get_tables_from_website(url):
     return soup.find_all('table')
 
 
-def scrape_data(url, file_name):
+def save_to_csv(file_name, header, csv_data):
+    """
+    Write the scraped data into file
+    :param file_name: path where the data will be exported to
+    :param header: header of the csv file
+    :param csv_data: scraped data
+    """
+    with open(file_name, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(header)
+        writer.writerows(csv_data)
+
+
+def check_input_website():
+    """
+    Check the existence of the website to scrape, if none is found, or incorrect website is provided, ask user for new
+    :return: website to be scraped
+    """
+    try:
+        link = sys.argv[1]
+    except:
+        link = input("Enter the URL of the website: ")
+
+    # check for the necessary part of the website for the code to work
+    if "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=" not in link:
+        print("Incorrect website url.")
+        print("Please provide a website including 'https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj='")
+        quit()
+
+    return link
+
+
+def check_input_file():
+    """
+    Check the existence of the file name as an argument, if none is found, ask for it
+    :return: name of the file where data will be exported
+    """
+    try:
+        file_name = sys.argv[2]
+    except:
+        file_name = input("Enter the name of the output file: ")
+
+    return file_name
+
+
+def scrape_data(url):
     """
     :param url: an url for a specific 'Okres'. Must include the part 'https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj='
-    :param file_name: name of the final file where data will be exported
-    :return: nothing
+    :return: list of elements: header, csv_data
     """
     tables = get_tables_from_website(url)
     csv_data = []
@@ -46,9 +90,7 @@ def scrape_data(url, file_name):
                 okrsek_tables = get_tables_from_website(link)
 
                 # getting values from the first summary table
-                okrsek_souhrn_table = okrsek_tables[0]
-                okrsek_souhrn_row = okrsek_souhrn_table.find_all("tr")[2]
-                okrsek_souhrn_cells = okrsek_souhrn_row.find_all("td")
+                okrsek_souhrn_cells = okrsek_tables[0].find_all("tr")[2].find_all("td")
                 data.append(okrsek_souhrn_cells[3].get_text())  # registered column
                 data.append(okrsek_souhrn_cells[4].get_text())  # envelopes column
                 data.append(okrsek_souhrn_cells[7].get_text())  # valid column
@@ -69,28 +111,19 @@ def scrape_data(url, file_name):
 
                 csv_data.append(data)
 
-    # write the header and collected data into the file
-    with open(file_name, 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(header)
-        writer.writerows(csv_data)
+    return [header, csv_data]
+
+
+def main():
+    """
+    main function of the script
+    """
+    website = check_input_website()
+    provided_file_name = check_input_file()
+    data = scrape_data(website)
+    save_to_csv(provided_file_name, data[0], data[1])
 
 
 if __name__ == "__main__":
-    try:
-        website = sys.argv[1]
-    except:
-        website = input("Enter the URL of the website: ")
 
-    # check for the necessary part of the website for the code to work
-    if "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=" not in website:
-        print("Incorrect website url.")
-        print("Please provide a website including 'https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj='")
-        quit()
-
-    try:
-        provided_file_name = sys.argv[2]
-    except:
-        provided_file_name = input("Enter the name of the output file: ")
-
-    scrape_data(website, provided_file_name)
+    main()
