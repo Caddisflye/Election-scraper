@@ -67,6 +67,45 @@ def check_input_file():
     return file_name
 
 
+def get_row_data(cells, header):
+    """
+    This function returns updated header variable and all necessary columns for a single row of the final csv file.
+    :param cells:
+    :param header:
+    :return:
+    """
+
+    # the link in the tables is not absolute,so adding the necessary part
+    link = "https://www.volby.cz/pls/ps2017nss/" + cells[0].find("a")["href"]
+
+    data = [cells[0].find("a").get_text(), cells[1].get_text()]  # code column
+
+    # using the found link in the "číslo" column to get to the tables with values to export
+    okrsek_tables = get_tables_from_website(link)
+
+    # getting values from the first summary table
+    okrsek_souhrn_cells = okrsek_tables[0].find_all("tr")[2].find_all("td")
+    data.append(okrsek_souhrn_cells[3].get_text())  # registered column
+    data.append(okrsek_souhrn_cells[4].get_text())  # envelopes column
+    data.append(okrsek_souhrn_cells[7].get_text())  # valid column
+
+    # getting values from the second and third tables containing values for specific political parties
+    for i in range(1, 3):
+        okrsek_strany_rows = okrsek_tables[i].find_all("tr")
+        for okrsek_strany_row in okrsek_strany_rows:
+            okrsek_strany_cells = okrsek_strany_row.find_all("td")
+            if okrsek_strany_cells:  # check if not a row of empty cells
+                strana = okrsek_strany_cells[1].get_text()
+                okrsek_strany_value = okrsek_strany_cells[2].get_text()
+                data.append(okrsek_strany_value)
+
+                # if strana not in header -> append it
+                if strana not in header:
+                    header.append(strana)
+
+    return data, header
+
+
 def scrape_data(url):
     """
     :param url: an url for a specific 'Okres'. Must include the part 'https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj='
@@ -82,32 +121,7 @@ def scrape_data(url):
             cells = row.find_all("td")
             if cells and cells[0].find("a"):  # check if not an empty cell
 
-                # the link in the tables is not absolute,so adding the necessary part
-                link = "https://www.volby.cz/pls/ps2017nss/" + cells[0].find("a")["href"]
-                data = [cells[0].find("a").get_text(), cells[1].get_text()]  # code column
-
-                # using the found link in the "číslo" column to get to the tables with values to export
-                okrsek_tables = get_tables_from_website(link)
-
-                # getting values from the first summary table
-                okrsek_souhrn_cells = okrsek_tables[0].find_all("tr")[2].find_all("td")
-                data.append(okrsek_souhrn_cells[3].get_text())  # registered column
-                data.append(okrsek_souhrn_cells[4].get_text())  # envelopes column
-                data.append(okrsek_souhrn_cells[7].get_text())  # valid column
-
-                # getting values from the second and third tables containing values for specific political parties
-                for i in range(1, 3):
-                    okrsek_strany_rows = okrsek_tables[i].find_all("tr")
-                    for okrsek_strany_row in okrsek_strany_rows:
-                        okrsek_strany_cells = okrsek_strany_row.find_all("td")
-                        if okrsek_strany_cells:  # check if not a row of empty cells
-                            strana = okrsek_strany_cells[1].get_text()
-                            okrsek_strany_value = okrsek_strany_cells[2].get_text()
-                            data.append(okrsek_strany_value)
-
-                            # if strana not in header -> append it
-                            if strana not in header:
-                                header.append(strana)
+                data, header = get_row_data(cells, header)
 
                 csv_data.append(data)
 
