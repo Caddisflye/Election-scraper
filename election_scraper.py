@@ -72,9 +72,8 @@ def get_row_data(cells, header):
     This function returns updated header variable and all necessary columns for a single row of the final csv file.
     :param cells:
     :param header:
-    :return:
+    :return: data - list of values for each column, header - updated variable with additional political parties
     """
-
     # the link in the tables is not absolute,so adding the necessary part
     link = "https://www.volby.cz/pls/ps2017nss/" + cells[0].find("a")["href"]
 
