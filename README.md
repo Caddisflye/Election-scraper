@@ -29,9 +29,8 @@ brno_venkov.csv
 
 requests, beautifulsoup4
 
-## Example
+## Example of the script call
 
-Example of the script call with provided arguments:
 ```
 python election_scraper.py "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=11&xnumnuts=6203" brno_venkov.csv
 ```
