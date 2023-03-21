@@ -8,9 +8,10 @@ The user chooses a specific territory and provides the URL in the "Výběr obce"
 
 ## Website
 
-This URL is provided as the first argument when calling the script from terminal. 
+The website URL is provided as the first argument when calling the script from terminal. 
 When no URL is provided, the user is asked to provide one.
-Example of the URL for Brno-venkov: "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=11&xnumnuts=6203"
+### Example of the URL for Brno-venkov: 
+"https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=11&xnumnuts=6203"
 
 ## Export file
 
@@ -21,7 +22,7 @@ Example of the file name: brno_venkov.csv
 
 ## Necessary libraries
 
-Necessary libraries: requests, beautifulsoup4
+requests, beautifulsoup4
 
 ## Example
 
