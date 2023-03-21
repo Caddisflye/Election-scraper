@@ -10,15 +10,20 @@ The user chooses a specific territory and provides the URL in the "Výběr obce"
 
 The website URL is provided as the first argument when calling the script from terminal. 
 When no URL is provided, the user is asked to provide one.
-### Example of the URL for Brno-venkov: 
+### Example of the URL for Brno-venkov:
+```
 "https://www.volby.cz/pls/ps2017nss/ps32?xjazyk=CZ&xkraj=11&xnumnuts=6203"
+```
 
 ## Export file
 
 The scraped data will be exported as a .csv file.
 The name of the output file needs to be specified as the second argument when calling the script.
 When no file name is provided, the user is asked to provide one.
-Example of the file name: brno_venkov.csv
+### Example of the file name:
+```
+brno_venkov.csv
+```
 
 ## Necessary libraries
 
